@@ -1,0 +1,82 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/util.js}"></script>
+
+</head>
+<body>
+
+<span th:if="${voted}">
+<div class="container top horizontal-center">
+
+        <table class="table">
+            <thead>
+            <tr>
+                <th colspan="3" scope="col" style="text-align:center;">Мимитр</th>
+            </tr>
+            <tr>
+                <th colspan="3" scope="col" style="text-align:center;">Топ 10</th>
+            </tr>
+            <tr>
+                <th scope="col">Место</th>
+                <th scope="col">Изображение</th>
+                <th scope="col">Имя</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            <th:block th:each="target, iter : ${targets}">
+                <tr>
+                    <td style="vertical-align: middle; text-align: center; font-size: xx-large" scope="row" th:text="${iter.index + 1}"></td>
+                    <td><div style="width: 150px; height: 150px; overflow: hidden"><img
+                            th:src="${'/java/catmash/img/' + target.fileName}" style="width:inherit"></div></td>
+                    <td style="vertical-align: middle" th:text="${target.name}"></td>
+                </tr>
+            </th:block>
+
+            </tbody>
+        </table>
+    </div>
+</span>
+
+<span th:if="${!voted}">
+<div class="container top horizontal-center">
+    <div class="card" style="margin-top: 15px; padding: 10px">
+
+    <table th:align="center" class="table table-borderless">
+        <thead>
+        <tr>
+            <th colspan="2" scope="col" style="text-align:center; font-size: xx-large" th:text="${mashName}"></th>
+        </tr>
+        <tr>
+            <th colspan="2" scope="col" style="text-align:center; font-size: x-large" th:text="${respondentMessage}"></th>
+        </tr>
+        </thead>
+        <tr>
+            <td style="text-align:center;"><img class="imgSurv1" th:id="${targetsForMash[0].id}" th:src="@{'/img/' + ${targetsForMash[0].fileName}}" th:width="200">
+            </td>
+            <td style="text-align:center;"><img class="imgSurv2" th:id="${targetsForMash[1].id}" th:src="@{'/img/' + ${targetsForMash[1].fileName}}" th:width="200">
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align:center;" th:text="${targetsForMash[0].name}"></td>
+            <td style="text-align:center;" th:text="${targetsForMash[1].name}"></td>
+        </tr>
+    </table>
+    </div>
+
+</div>
+</span>
+
+</body>
+</html>
