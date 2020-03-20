@@ -45,6 +45,9 @@ $(document).ready(function () {
             e.preventDefault(e);
             alert("Количество файлов должно быть четным");
         }
+    }).on('click', '#login', function (e) {
+        e.preventDefault();
+        window.location.href = "login";
     });
 
 

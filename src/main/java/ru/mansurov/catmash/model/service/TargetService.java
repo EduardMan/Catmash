@@ -2,6 +2,7 @@ package ru.mansurov.catmash.model.service;
 
 import ru.mansurov.catmash.model.Mash;
 import ru.mansurov.catmash.model.Target;
+import ru.mansurov.catmash.model.User;
 
 import java.util.List;
 
@@ -14,6 +15,8 @@ public interface TargetService {
     void increaseRating(Target target);
 
     List<Target> get2RandomTargets(Mash mash, List<Target> targets);
+
+    List<Target> get2RandomTargets(Mash mash, User user);
 
     List<Target> findAllByIdIn(List<Long> ids);
 

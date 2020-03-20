@@ -2,14 +2,17 @@ package ru.mansurov.catmash.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.mansurov.catmash.model.Mash;
 import ru.mansurov.catmash.model.Target;
+import ru.mansurov.catmash.model.User;
 import ru.mansurov.catmash.model.service.MashServiceImpl;
 import ru.mansurov.catmash.model.service.TargetServiceImpl;
+import ru.mansurov.catmash.model.service.UserServiceImpl;
 import ru.mansurov.catmash.util.Utils;
 
 import javax.servlet.http.Cookie;
@@ -27,6 +30,9 @@ public class MashController {
 
     @Autowired
     TargetServiceImpl targetService;
+
+    @Autowired
+    UserServiceImpl userService;
 
     @Value("${pictures.path}")
     private String picturesPath;
@@ -48,6 +54,9 @@ public class MashController {
 
     @Value("${mash.max.message.length}")
     private int maxMashMessage;
+
+    @Value("${registration.enable}")
+    private boolean registrationEnable;
 
     @PostMapping("/addMash")
     public String addPictures(@RequestParam("files") MultipartFile[] files,
@@ -95,11 +104,17 @@ public class MashController {
     @GetMapping("/mash/{mashName}")
     public String mashPage(@PathVariable("mashName") String mashName,
                            Model model,
+                           @AuthenticationPrincipal User user,
                            @CookieValue(value = "voted", defaultValue = "") String voted) {
 
         Mash currentMash = mashService.findByName(mashName);
-        List<Target> newRandomTargets = targetService.get2RandomTargets(currentMash,
-                targetService.findAllByIdIn(Utils.getIdsFromCookieString(voted)));
+        List<Target> newRandomTargets = null;
+        if (registrationEnable) {
+            newRandomTargets = targetService.get2RandomTargets(currentMash, user);
+        } else {
+            newRandomTargets = targetService.get2RandomTargets(currentMash,
+                    targetService.findAllByIdIn(Utils.getIdsFromCookieString(voted)));
+        }
 
         model.addAttribute("mash", currentMash);
 
@@ -124,20 +139,29 @@ public class MashController {
                                    @ModelAttribute("target") Target target,
                                    @ModelAttribute("otherTarget") Target otherTarget,
                                    @CookieValue(value = "voted", defaultValue = "") String voted,
+                                   @AuthenticationPrincipal User user,
                                    HttpServletResponse response) {
 
 
         List<Target> newRandomTargets = null;
         if (mashName != null && !mashName.isEmpty() && target != null && otherTarget != null) {
 
-            // Get two relative random targets, excluding targets which person has already voted plus current targets
-            String idsFilter = voted + (voted.length() == 0 ? "" : ".") + target.getId() + "." + otherTarget.getId();
-            newRandomTargets = targetService.get2RandomTargets(mashService.findByName(mashName),
-                    targetService.findAllByIdIn(Utils.getIdsFromCookieString(idsFilter)));
+            if (registrationEnable) {
+                User userFromDB = userService.findByUser(user);
+                userFromDB.getVotedTargets().add(target);
+                userFromDB.getVotedTargets().add(otherTarget);
+                userService.save(userFromDB);
+                newRandomTargets = targetService.get2RandomTargets(mashService.findByName(mashName), user);
+            } else {
+                // Get two relative random targets, excluding targets which person has already voted plus current targets
+                String idsFilter = voted + (voted.length() == 0 ? "" : ".") + target.getId() + "." + otherTarget.getId();
+                newRandomTargets = targetService.get2RandomTargets(mashService.findByName(mashName),
+                        targetService.findAllByIdIn(Utils.getIdsFromCookieString(idsFilter)));
 
-            // Increase ration of selected target and write to cookie new shown targets
-            targetService.increaseRating(target);
-            response.addCookie(new Cookie("voted", idsFilter));
+                // Increase ration of selected target and write to cookie new shown targets
+                targetService.increaseRating(target);
+                response.addCookie(new Cookie("voted", idsFilter));
+            }
 
         }
         return newRandomTargets;

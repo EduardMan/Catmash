@@ -1,6 +1,9 @@
 package ru.mansurov.catmash.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "target")
@@ -19,6 +22,10 @@ public class Target {
     private int rating;
     @Column(nullable = false)
     private String name;
+
+    @ManyToMany(mappedBy = "votedTargets")
+    @JsonManagedReference
+    private Set<User> votedUsers;
 
     public Long getId() {
         return id;
@@ -58,5 +65,13 @@ public class Target {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Set<User> getVotedUsers() {
+        return votedUsers;
+    }
+
+    public void setVotedUsers(Set<User> votedUsers) {
+        this.votedUsers = votedUsers;
     }
 }

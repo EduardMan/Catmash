@@ -49,6 +49,8 @@ public class HomePageController {
         parameters.put("maxMashMessage", maxMashMessage);
         model.addAttribute("parameters", parameters);
 
+//        model.addAttribute()
+
         return "mainPage";
     }
 }

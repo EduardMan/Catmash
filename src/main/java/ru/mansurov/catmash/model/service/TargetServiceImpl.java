@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.mansurov.catmash.model.Mash;
 import ru.mansurov.catmash.model.Target;
+import ru.mansurov.catmash.model.User;
 import ru.mansurov.catmash.repo.TargetRepo;
 
 import java.util.List;
@@ -33,6 +34,11 @@ public class TargetServiceImpl implements TargetService {
     @Override
     public List<Target> get2RandomTargets(Mash mash, List<Target> targets) {
         return targetRepo.get2RandomTargets(mash, targets);
+    }
+
+    @Override
+    public List<Target> get2RandomTargets(Mash mash, User user) {
+        return targetRepo.get2RandomTargets(mash, user);
     }
 
     @Override
