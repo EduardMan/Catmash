@@ -11,6 +11,8 @@
 
 <div th:replace="fragments/bodyContent.html :: navbar"></div>
 
+<div th:with="someVariable=${'Имя будет взято из названия файла, например для файла &quot;Барсик.jpg&quot; будет взято имя &quot;Барсик&quot; (нужно добавить минимум ' + parameters.picturesMinCount + ' файлов, их количество должно быть четным).'}">
+
 <div class="container top horizontal-center">
 
     <div class="card default-indentation">
@@ -39,8 +41,7 @@
                 <input type="file" name="files" multiple class="form-control-file" id="buttonAddFiles"
                        aria-describedby="emailHelp" accept="image/*" th:picturesMinCount="${parameters.picturesMinCount}"
                        th:picturesMaxCount="${parameters.picturesMaxCount}" required>
-                <small id="emailHelp" class="form-text text-muted">Имя будет взято из названия файла, например для файла
-                "Барсик.jpg" будет взято имя "Барсик" (нужно добавить минимум десять файлов, их количество должно быть четным).</small>
+                <small id="emailHelp" class="form-text text-muted" th:text="${someVariable}"></small>
             </div>
             <button type="submit" class="btn btn-primary" id="addMashButton">Создать опрос</button>
         </form>
