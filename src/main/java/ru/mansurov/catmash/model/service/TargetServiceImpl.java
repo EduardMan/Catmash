@@ -26,7 +26,6 @@ public class TargetServiceImpl implements TargetService {
 
     @Override
     public void increaseRating(Target target) {
-//        Target target = targetRepo.findById(targetId).get();
         target.setRating(target.getRating() + 1);
         targetRepo.save(target);
     }

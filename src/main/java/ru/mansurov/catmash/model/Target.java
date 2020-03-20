@@ -13,9 +13,11 @@ public class Target {
     @ManyToOne
     @JoinColumn(name = "mash_id")
     private Mash mash;
-    @Column(name = "file_name")
+    @Column(name = "file_name", nullable = false)
     private String fileName;
+    @Column(nullable = false)
     private int rating;
+    @Column(nullable = false)
     private String name;
 
     public Long getId() {

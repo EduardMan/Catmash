@@ -1,24 +1,19 @@
-<html xmlns:th="http://www.thymeleaf.org">
-
 <!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<link rel="icon" th:href="@{/favicon.ico}">
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script type="text/javascript" th:src="@{/js/util.js}"></script>
+    <title>Catmash</title>
+    <div th:replace="fragments/head.html :: headerCSSJS"></div>
 
 </head>
 <body>
 
-<div class="container top horizontal-center">
-    <div class="card" style="margin-top: 15px; padding: 10px">
+<div th:replace="fragments/bodyContent.html :: navbar"></div>
 
+<div class="container top horizontal-center">
+
+    <div class="card default-indentation">
         <h3>Опросы: </h3>
         <ul class="list-group">
             <th:block th:each="mash : ${mashs}">
@@ -28,23 +23,24 @@
         </ul>
     </div>
 
-    <div class="card" style="margin-top: 15px; padding: 10px">
+    <div class="card default-indentation">
         <h3>Добавить свой опрос: </h3>
         <form method="post" enctype="multipart/form-data" action="addMash">
             <div class="form-group">
                 <label for="mashName">Название опроса:</label>
-                <input type="text" class="form-control" id="mashName" name="mashName" minlength="3" maxlength="15" required>
+                <input type="text" class="form-control" id="mashName" name="mashName" th:minlength="${parameters.minMashNameLength}" th:maxlength="${parameters.maxMashNameLength}" required>
             </div>
             <div class="form-group">
                 <label for="mashName">Сообщение для респондента:</label>
-                <input type="text" class="form-control" id="respondentMessage" name="respondentMessage" minlength="10" maxlength="45" required>
+                <input type="text" class="form-control" id="respondentMessage" name="respondentMessage" th:minlength="${parameters.minMashMessage}" th:maxlength="${parameters.maxMashMessage}" required>
             </div>
             <div class="form-group">
                 <label for="buttonAddFiles">Добавьте изображения</label>
                 <input type="file" name="files" multiple class="form-control-file" id="buttonAddFiles"
-                       aria-describedby="emailHelp" accept="image/*" required>
+                       aria-describedby="emailHelp" accept="image/*" th:picturesMinCount="${parameters.picturesMinCount}"
+                       th:picturesMaxCount="${parameters.picturesMaxCount}" required>
                 <small id="emailHelp" class="form-text text-muted">Имя будет взято из названия файла, например для файла
-                "Барсик.jpg" будет взято имя "Барсик" (нужно добавить минимум десять файлов).</small>
+                "Барсик.jpg" будет взято имя "Барсик" (нужно добавить минимум десять файлов, их количество должно быть четным).</small>
             </div>
             <button type="submit" class="btn btn-primary" id="addMashButton">Создать опрос</button>
         </form>

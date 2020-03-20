@@ -1,0 +1,48 @@
+.default-indentation {
+    margin-top: 15px;
+    padding: 10px;
+}
+
+.text-center {
+    text-align: center;"
+}
+
+.top-numbers {
+    vertical-align: middle !important;
+    text-align: center;
+    font-size: xx-large;
+}
+
+.cell-with-image {
+    width: 150px;
+    height: 150px;
+    overflow: hidden;
+}
+
+.table-title {
+    text-align:center;
+    font-size: xx-large;
+}
+
+.table-message {
+    text-align:center;
+    font-size: x-large;
+}
+
+.mash-target {
+    text-align:center;
+    cursor: pointer;
+}
+
+.image-center {
+    text-align: -webkit-center;
+}
+
+.cell-with-name {
+    vertical-align: middle !important;
+    text-align: center;
+}
+
+.img-top {
+    width:inherit;
+}

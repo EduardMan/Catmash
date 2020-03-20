@@ -1,0 +1,77 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="navbar">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" th:href="@{/}">Catmash</a>
+    </nav>
+</div>
+
+<div th:fragment="topTagrets (mash, topTargets)">
+    <div class="container top horizontal-center">
+        <div class="card default-indentation">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th colspan="3" scope="col" class="table-title border-0" th:text="${mash.name}"></th>
+                </tr>
+                <tr>
+                    <th colspan="3" scope="col" class="table-message border-0">Топ 10</th>
+                </tr>
+                <tr>
+                    <th scope="col" class="text-center">Место</th>
+                    <th scope="col" class="text-center">Изображение</th>
+                    <th scope="col" class="text-center">Имя</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <th:block th:each="target, iter : ${topTargets}">
+                    <tr>
+                        <td class="top-numbers" scope="row"
+                            th:text="${iter.index + 1}"></td>
+                        <td class="image-center"><div class="cell-with-image"><img
+                                th:src="${'/java/catmash/img/' + target.fileName}" class="img-top"></div></td>
+                        <td class="cell-with-name" th:text="${target.name}"></td>
+                    </tr>
+                </th:block>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div th:fragment="mash (mash, targetsForMash)">
+    <div class="container top horizontal-center">
+        <div class="card default-indentation">
+
+            <table th:align="center" class="table table-borderless">
+                <thead>
+                <tr>
+                    <th colspan="2" scope="col" class="table-title" th:text="${mash.name}"></th>
+                </tr>
+                <tr>
+                    <th colspan="2" scope="col" class="table-message"
+                        th:text="${mash.message}"></th>
+                </tr>
+                </thead>
+                <tr>
+                    <td class="mash-target"><img class="imgTarget1" th:id="${targetsForMash[0].id}"
+                                                 th:src="@{'/img/' + ${targetsForMash[0].fileName}}"
+                                                 th:width="200">
+                    </td>
+                    <td class="mash-target"><img class="imgTarget2" th:id="${targetsForMash[1].id}"
+                                                 th:src="@{'/img/' + ${targetsForMash[1].fileName}}"
+                                                 th:width="200">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="nameTarget1 mash-target" th:id="${targetsForMash[0].id}"
+                        th:text="${targetsForMash[0].name}"></td>
+                    <td class="nameTarget2 mash-target" th:id="${targetsForMash[1].id}"
+                        th:text="${targetsForMash[1].name}"></td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+</div>

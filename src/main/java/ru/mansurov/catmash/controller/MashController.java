@@ -10,12 +10,12 @@ import ru.mansurov.catmash.model.Mash;
 import ru.mansurov.catmash.model.Target;
 import ru.mansurov.catmash.model.service.MashServiceImpl;
 import ru.mansurov.catmash.model.service.TargetServiceImpl;
+import ru.mansurov.catmash.util.Utils;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,37 +31,60 @@ public class MashController {
     @Value("${pictures.path}")
     private String picturesPath;
 
+    @Value("${pictures.min.count}")
+    private int picturesMinCount;
+
+    @Value("${pictures.max.count}")
+    private int picturesMaxCount;
+
+    @Value("${mash.min.name.length}")
+    private int minMashNameLength;
+
+    @Value("${mash.max.name.length}")
+    private int maxMashNameLength;
+
+    @Value("${mash.min.message.length}")
+    private int minMashMessage;
+
+    @Value("${mash.max.message.length}")
+    private int maxMashMessage;
+
     @PostMapping("/addMash")
     public String addPictures(@RequestParam("files") MultipartFile[] files,
-                               @ModelAttribute("mashName") String mashName,
+                              @ModelAttribute("mashName") String mashName,
                               @ModelAttribute("respondentMessage") String respondentMessage) throws IOException {
 
-        if (files != null) {
+        if (files != null && files.length >= picturesMinCount && files.length <= picturesMaxCount && files.length % 2 == 0
+                && !mashName.isEmpty() && mashName.length() >= minMashNameLength && mashName.length() <= maxMashNameLength
+                && !respondentMessage.isEmpty() && respondentMessage.length() >= minMashMessage && respondentMessage.length() <= maxMashMessage) {
 
-            File fileMy = new File(picturesPath);
+            boolean folderExistence = Utils.checkFolderExistence(picturesPath);
 
-            if (!fileMy.exists()) {
-                fileMy.mkdir();
-            }
+            if (folderExistence) {
+                // Create new mash  and save in DB
+                Mash mash = new Mash();
+                mash.setName(mashName);
+                mash.setMessage(respondentMessage);
+                mashService.save(mash);
 
+                // Copy files to server
+                for (MultipartFile multipartFile :
+                        files) {
+                    // UUID prefix for file name
+                    String uuidFile = UUID.randomUUID().toString();
+                    String resultFileName = uuidFile + "." + multipartFile.getOriginalFilename();
 
-            Mash mash = new Mash();
-            mash.setName(mashName);
-            mash.setMessage(respondentMessage);
-            mashService.save(mash);
+                    // Copy file to server
+                    multipartFile.transferTo(new File(picturesPath + "/" + resultFileName));
 
-            for (MultipartFile multipartFile :
-                    files) {
-                String uuidFile = UUID.randomUUID().toString();
-                String resultFileName = uuidFile + "." + multipartFile.getOriginalFilename();
-
-                multipartFile.transferTo(new File(picturesPath + "/" + resultFileName));
-
-                Target target = new Target();
-                target.setMash(mash);
-                target.setFileName(resultFileName);
-                target.setName(multipartFile.getOriginalFilename().replaceFirst("[.][^.]+$", ""));
-                targetService.save(target);
+                    // Create new target and save in DB
+                    Target target = new Target();
+                    target.setMash(mash);
+                    target.setFileName(resultFileName);
+                    // Name for picture, it based on file name without extension
+                    target.setName(Utils.getFileNameWithoutExtension(multipartFile.getOriginalFilename()));
+                    targetService.save(target);
+                }
             }
 
         }
@@ -72,33 +95,23 @@ public class MashController {
     @GetMapping("/mash/{mashName}")
     public String mashPage(@PathVariable("mashName") String mashName,
                            Model model,
-                           @CookieValue(value = "voted", defaultValue = "") String voted,
-                           HttpServletResponse response) {
+                           @CookieValue(value = "voted", defaultValue = "") String voted) {
 
-        Mash mash = mashService.findByName(mashName);
-        model.addAttribute("picturesPath", picturesPath);
-        model.addAttribute("targets", targetService.getTop10ByRating(mash));
-        model.addAttribute("mashName", mashName);
-        model.addAttribute("respondentMessage", mash.getMessage());
+        Mash currentMash = mashService.findByName(mashName);
+        List<Target> newRandomTargets = targetService.get2RandomTargets(currentMash,
+                targetService.findAllByIdIn(Utils.getIdsFromCookieString(voted)));
 
-        Cookie cookie;
+        model.addAttribute("mash", currentMash);
 
-        StringBuilder stringBuilder = new StringBuilder(voted);
-
-        List<Long> l = new ArrayList<>();
-        if (stringBuilder.length() != 0) {
-            for (String str :
-                    stringBuilder.toString().split("\\.")) {
-                l.add(Long.valueOf(str));
-            }
-        }
-
-        List<Target> tt = targetService.get2RandomTargets(mashService.findByName(mashName), targetService.findAllByIdIn(l));
-
-        model.addAttribute("voted", true);
-        if (tt.size() != 0) {
-
-            model.addAttribute("targetsForMash", tt);
+        // newRandomTargets.size() == 0 is true means that we do not have new targets for person
+        // consequently he has already voting so we just show we will show him the results
+        // newRandomTargets.size() == 0 is false means that person still does not finished the mesh
+        // so we wll give him new targets
+        if (newRandomTargets.size() == 0) {
+            model.addAttribute("topTargets", targetService.getTop10ByRating(currentMash));
+            model.addAttribute("voted", true);
+        } else {
+            model.addAttribute("targetsForMash", newRandomTargets);
             model.addAttribute("voted", false);
         }
 
@@ -107,44 +120,26 @@ public class MashController {
 
     @PostMapping("/mash/{mashName}/vote")
     @ResponseBody
-    public String[] mashVoting(@PathVariable("mashName") String mashName,
-                               @ModelAttribute("target") Target target,
-                               @ModelAttribute("otherTarget") Target otherTarget,
-                               @CookieValue(value = "voted", defaultValue = "") String voted,
-                               HttpServletResponse response,
-                               Model model) {
+    public List<Target> mashVoting(@PathVariable("mashName") String mashName,
+                                   @ModelAttribute("target") Target target,
+                                   @ModelAttribute("otherTarget") Target otherTarget,
+                                   @CookieValue(value = "voted", defaultValue = "") String voted,
+                                   HttpServletResponse response) {
 
 
-        Cookie cookie;
+        List<Target> newRandomTargets = null;
+        if (mashName != null && !mashName.isEmpty() && target != null && otherTarget != null) {
 
-        StringBuilder stringBuilder = new StringBuilder(voted);
-        if (!voted.isEmpty())
-            stringBuilder.append(".");
-        stringBuilder.append(target.getId().toString()).append(".").append(otherTarget.getId().toString());
+            // Get two relative random targets, excluding targets which person has already voted plus current targets
+            String idsFilter = voted + (voted.length() == 0 ? "" : ".") + target.getId() + "." + otherTarget.getId();
+            newRandomTargets = targetService.get2RandomTargets(mashService.findByName(mashName),
+                    targetService.findAllByIdIn(Utils.getIdsFromCookieString(idsFilter)));
 
-        cookie = new Cookie("voted", stringBuilder.toString());
-        response.addCookie(cookie);
-
-        List<Long> l = new ArrayList<>();
-        for (String str :
-                stringBuilder.toString().split("\\.")) {
-            l.add(Long.valueOf(str));
-        }
-
-        List<Target> tt = targetService.get2RandomTargets(mashService.findByName(mashName), targetService.findAllByIdIn(l));
-
-        String[] arr = new String[0];
-        if (tt.size() != 0) {
-            arr = new String[4];
-            arr[0] = tt.get(0).getFileName();
-            arr[1] = tt.get(1).getFileName();
-            arr[2] = tt.get(0).getId().toString();
-            arr[3] = tt.get(1).getId().toString();
-
+            // Increase ration of selected target and write to cookie new shown targets
             targetService.increaseRating(target);
-        }
-        return arr;
+            response.addCookie(new Cookie("voted", idsFilter));
 
-//        return new String[2];
+        }
+        return newRandomTargets;
     }
 }
