@@ -2,7 +2,27 @@
 $(document).ready(function () {
     var csrf = $('input[name=_csrf]').val();
 
-    $('body').on('click', '.imgTarget1, .imgTarget2, .nameTarget1, .nameTarget2', function (e) {
+    $('body').on('click', '.removeMash', function (e) {
+        e.preventDefault();
+        var currentMash = this.id;
+        $.ajax({
+            type: "POST",
+            url: "removeMash",
+            data: {"currentMash": currentMash, "_csrf": csrf},
+            success: function (data) {
+                if (data) {
+                    $('#mash_' + currentMash).remove();
+                } else {
+                    window.location.href = mashName;
+                }
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        })
+    });
+
+    $('.imgTarget1, .imgTarget2, .nameTarget1, .nameTarget2').on('click', function (e) {
         var url = $(location).attr("href").match("\/java\/catmash\/mash\/(.*)");
         var mashName = url[1];
         var imgTarget1 = $('.imgTarget1')[0];
@@ -30,7 +50,14 @@ $(document).ready(function () {
                 console.log(data);
             }
         });
-    }).on('click', '#addMashButton', function (e) {
+    });
+
+    $('#login').on('click', function (e) {
+        e.preventDefault();
+        window.location.href = "login";
+    });
+
+    $('#addMashButton').on('click', function (e) {
         var $fileUpload = $("input[type='file']");
         var picturesMinCount = $('#buttonAddFiles').attr('picturesMinCount');
         var picturesMaxCount = $('#buttonAddFiles').attr('picturesMaxCount');
@@ -45,26 +72,5 @@ $(document).ready(function () {
             e.preventDefault(e);
             alert("Количество файлов должно быть четным");
         }
-    }).on('click', '#login', function (e) {
-        e.preventDefault();
-        window.location.href = "login";
-    }).on('click', '.removeMash', function (e) {
-        e.preventDefault();
-        var currentMash = this.id;
-        $.ajax({
-            type: "POST",
-            url: "removeMash",
-            data: {"currentMash": currentMash, "_csrf": csrf},
-            success: function (data) {
-                if (data) {
-                    $('#mash_' + currentMash).remove();
-                } else {
-                    window.location.href = mashName;
-                }
-            },
-            error: function (data) {
-                console.log(data);
-            }
-        })
     })
 });
