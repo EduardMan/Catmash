@@ -11,13 +11,16 @@
 <div class="container top horizontal-center">
     <div class="card default-indentation">
         <form name="registrationForm" th:action="@{/addUser}" method="post">
+            <span th:if="${param.error != null}"><p class="text-danger">Имя пользователя занято</p></span>
             <div class="form-group">
                 <label for="InputUserName">Имя пользователя:</label>
-                <input name="username" type="text" class="form-control" id="InputUserName" aria-describedby="emailHelp">
+                <input name="username" type="text" class="form-control" id="InputUserName" aria-describedby="emailHelp"
+                minlength="4" maxlength="60" required>
             </div>
             <div class="form-group">
                 <label for="InputPassword">Пароль:</label>
-                <input name="password" type="password" class="form-control" id="InputPassword">
+                <input name="password" type="password" class="form-control" id="InputPassword"
+                minlength="6" maxlength="50" required>
             </div>
             <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
         </form>

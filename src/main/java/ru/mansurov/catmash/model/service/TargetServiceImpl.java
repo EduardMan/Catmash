@@ -45,4 +45,14 @@ public class TargetServiceImpl implements TargetService {
     public List<Target> findAllByIdIn(List<Long> ids) {
         return targetRepo.findAllByIdIn(ids);
     }
+
+    @Override
+    public void deleteTargetsByMash(Mash mash) {
+        targetRepo.deleteTargetsByMash(mash);
+    }
+
+    @Override
+    public List<Target> getTargetsByMash(Mash mash) {
+        return targetRepo.getTargetsByMash(mash);
+    }
 }

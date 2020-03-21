@@ -3,6 +3,7 @@ package ru.mansurov.catmash.model.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.mansurov.catmash.model.Mash;
+import ru.mansurov.catmash.model.User;
 import ru.mansurov.catmash.repo.MashRepo;
 
 import java.util.List;
@@ -26,5 +27,15 @@ public class MashServiceImpl implements MashService {
     @Override
     public Mash findByName(String name) {
         return mashRepo.findByName(name);
+    }
+
+    @Override
+    public List<Mash> findNotVotedMashesByUser(User user) {
+        return mashRepo.findNotVotedMashesByUser(user.getId());
+    }
+
+    @Override
+    public void deleteById(Mash mash) {
+        mashRepo.deleteById(mash.getId());
     }
 }

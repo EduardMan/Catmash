@@ -19,7 +19,7 @@ public class UserController {
         userCreation = userServiceImpl.addUser(user);
 
         if (userCreation) {
-            return "redirect:/login";
+            return "redirect:/login?successRegistration";
         }
         return "redirect:/registration?error";
 

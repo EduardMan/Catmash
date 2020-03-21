@@ -1,6 +1,6 @@
 package ru.mansurov.catmash.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -15,7 +15,9 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    @Column(name = "username")
     private String username;
+    @Column(name = "password")
     private String password;
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
@@ -23,12 +25,16 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
 
-    @ManyToMany
-    @JoinTable(
-            name = "voted_user_targets",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "target_id"))
-    @JsonBackReference
+//    @ManyToMany
+//    @JoinTable(
+//            name = "voted_user_targets",
+//            joinColumns = @JoinColumn(name = "user_id"),
+//            inverseJoinColumns = @JoinColumn(name = "target_id"))
+//    @JsonBackReference
+//    private Set<Target> votedTargets;
+
+    @ManyToMany(mappedBy = "votedUsers")
+    @JsonManagedReference
     private Set<Target> votedTargets;
 
     public Long getId() {
@@ -97,4 +103,13 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    public boolean containsRole(String role) {
+        return getRoles().contains(Role.valueOf(role));
+    }
+
+    public boolean containsRole(Role role) {
+        return getRoles().contains(role);
+    }
+
 }

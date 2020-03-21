@@ -1,17 +1,20 @@
 package ru.mansurov.catmash.model;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import ru.mansurov.catmash.model.service.MashServiceImpl;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "mash", uniqueConstraints = {@UniqueConstraint(columnNames = {"name"})})
 public class Mash {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
     private Long id;
-    @Column(nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
-    @Column(nullable = false)
+    @Column(name = "message", nullable = false)
     private String message;
 
     public Long getId() {
@@ -37,4 +40,5 @@ public class Mash {
     public void setMessage(String message) {
         this.message = message;
     }
+
 }

@@ -1,6 +1,6 @@
 package ru.mansurov.catmash.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -19,12 +19,22 @@ public class Target {
     @Column(name = "file_name", nullable = false)
     private String fileName;
     @Column(nullable = false)
+    @JoinColumn(name = "rating")
     private int rating;
     @Column(nullable = false)
+    @JoinColumn(name = "name")
     private String name;
 
-    @ManyToMany(mappedBy = "votedTargets")
-    @JsonManagedReference
+//    @ManyToMany(mappedBy = "votedTargets")
+//    @JsonManagedReference
+//    private Set<User> votedUsers;
+
+    @ManyToMany
+    @JoinTable(
+            name = "voted_user_targets",
+            joinColumns = @JoinColumn(name = "target_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
+    @JsonBackReference
     private Set<User> votedUsers;
 
     public Long getId() {

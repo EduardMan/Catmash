@@ -2,9 +2,11 @@ package ru.mansurov.catmash.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import ru.mansurov.catmash.model.User;
 import ru.mansurov.catmash.model.service.MashServiceImpl;
 
 import java.util.HashMap;
@@ -35,7 +37,8 @@ public class HomePageController {
     private int maxMashMessage;
 
     @GetMapping
-    public String homePage(Model model) {
+    public String homePage(Model model,
+                           @AuthenticationPrincipal User user) {
         // find all mashes and show him for user
         model.addAttribute("mashs", mashService.findAll());
 
@@ -49,7 +52,12 @@ public class HomePageController {
         parameters.put("maxMashMessage", maxMashMessage);
         model.addAttribute("parameters", parameters);
 
-//        model.addAttribute()
+        model.addAttribute("notVotedMashes", null);
+        if (user != null) {
+            model.addAttribute("notVotedMashes", mashService.findNotVotedMashesByUser(user));
+        }
+
+        model.addAttribute("user", user);
 
         return "mainPage";
     }

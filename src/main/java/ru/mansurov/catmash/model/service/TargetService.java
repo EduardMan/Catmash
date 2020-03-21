@@ -20,4 +20,8 @@ public interface TargetService {
 
     List<Target> findAllByIdIn(List<Long> ids);
 
+    void deleteTargetsByMash(Mash mash);
+
+    List<Target> getTargetsByMash(Mash mash);
+
 }

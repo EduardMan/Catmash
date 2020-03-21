@@ -10,14 +10,19 @@
 <div th:replace="fragments/bodyContent.html :: navbar"></div>
 <div class="container top horizontal-center">
     <div class="card default-indentation">
+        <h3>Авторизируйтесь, чтобы просмотреть опросы</h3>
         <form th:action="@{/login}" method="post">
+            <span th:if="${param.error != null}"><p class="text-danger">Неправильное имя пользователя или пароль</p></span>
+            <span th:if="${param.successRegistration != null}"><p class="text-success">Регистрация прошла успешно</p></span>
             <div class="form-group">
                 <label for="InputUserName">Имя пользователя:</label>
-                <input name="username" type="text" class="form-control" id="InputUserName" aria-describedby="emailHelp">
+                <input name="username" type="text" class="form-control" id="InputUserName" aria-describedby="emailHelp"
+                required>
             </div>
             <div class="form-group">
                 <label for="InputPassword">Пароль:</label>
-                <input name="password" type="password" class="form-control" id="InputPassword">
+                <input name="password" type="password" class="form-control" id="InputPassword"
+                required>
             </div>
             <button type="submit" class="btn btn-primary">Войти</button>
             <a th:href="@{/registration}" class="btn btn-primary"> Регистрация </a>

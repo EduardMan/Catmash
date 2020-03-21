@@ -1,10 +1,14 @@
 package ru.mansurov.catmash.util;
 
+import org.springframework.beans.factory.annotation.Value;
+import ru.mansurov.catmash.model.Target;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Utils {
+
     public static boolean checkFolderExistence(String picturesPath) {
         boolean success = true;
         File fileMy = new File(picturesPath);
@@ -27,5 +31,13 @@ public class Utils {
             }
         }
         return ids;
+    }
+
+    public static void DeleteTargetFiles(List<Target> targets, String picturesPath) {
+        for (Target target :
+             targets) {
+            File targetFile = new File(picturesPath + "/" + target.getFileName());
+            targetFile.delete();
+        }
     }
 }
