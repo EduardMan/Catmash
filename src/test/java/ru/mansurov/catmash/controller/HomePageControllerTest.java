@@ -48,8 +48,10 @@ class HomePageControllerTest {
     }
 
     @Test
+    @Sql(value = {"/create-user-before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/mashes-after.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void correctLogin() throws Exception {
-        this.mockMvc.perform(formLogin().user("user3").password("user"))
+        this.mockMvc.perform(formLogin().user("user1").password("user1user1"))
                 .andDo(print())
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/"));

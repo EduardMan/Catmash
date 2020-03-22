@@ -100,13 +100,15 @@ public class MashController {
                         // Name for picture, it based on file name without extension
                         target.setName(Utils.getFileNameWithoutExtension(multipartFile.getOriginalFilename()));
                         targetService.save(target);
+
+                        return "redirect:/";
                     }
                 } else {
                     return "redirect:/?duplicateMashName";
                 }
             }
         }
-        return "redirect:/";
+        return "redirect:/?error";
     }
 
     @GetMapping("/mash/{mashName}")
