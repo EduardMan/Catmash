@@ -25,6 +25,8 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     public boolean addUser(User user) {
 
         try {
+            if (userRepo.findByUsername(user.getUsername()) != null)
+                return false;
             // set Role USER for all new users
             user.setRoles(new HashSet<Role>(Arrays.asList(Role.USER)));
             user.setPassword(passwordEncoder.encode(user.getPassword()));
