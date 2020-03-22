@@ -24,4 +24,6 @@ public interface TargetService {
 
     List<Target> getTargetsByMash(Mash mash);
 
+    Target getTargetById(Long id);
+
 }

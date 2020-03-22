@@ -2,18 +2,20 @@
 <div th:fragment="navbar">
     <nav class="navbar navbar-light bg-light">
         <a class="navbar-brand" th:href="@{/}">Catmash</a>
-        <div sec:authorize="isAuthenticated()">
-            <span type="text" sec:authentication="name" id="username"></span>
-            <form class="btn" th:action="@{/logout}" method="post">
-                <input type="submit" class="btn btn-primary" value="Выйти" />
-            </form>
-        </div>
-        <div sec:authorize="isAnonymous()">
-            <a type="text">Привет, пользователь</a>
-            <form class="btn" th:action="@{/login}" method="post">
-                <input id="login" type="submit" class="btn btn-primary" value="Войти" />
-            </form>
-        </div>
+        <th:block th:if="${@environment.getProperty('registration.enable')}">
+            <div sec:authorize="isAuthenticated()">
+                <span type="text" sec:authentication="name" id="username"></span>
+                <form class="btn" th:action="@{/logout}" method="post">
+                    <input type="submit" class="btn btn-primary" value="Выйти"/>
+                </form>
+            </div>
+            <div sec:authorize="isAnonymous()">
+                <a type="text">Привет, пользователь</a>
+                <form class="btn" th:action="@{/login}" method="post">
+                    <input id="login" type="submit" class="btn btn-primary" value="Войти"/>
+                </form>
+            </div>
+        </th:block>
     </nav>
 </div>
 
@@ -42,7 +44,8 @@
                             th:text="${iter.index + 1}"></td>
                         <td class="image-center">
                             <div class="cell-with-image"><img th:alt="${target.fileName}"
-                                    th:src="${'/java/catmash/img/' + target.fileName}" class="img-top" /></div>
+                                                              th:src="${'/java/catmash/img/' + target.fileName}"
+                                                              class="img-top"/></div>
                         </td>
                         <td class="cell-with-name" th:text="${target.name}"></td>
                     </tr>

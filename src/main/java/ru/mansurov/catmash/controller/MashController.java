@@ -68,7 +68,7 @@ public class MashController {
         if (files != null && files.length >= picturesMinCount && files.length <= picturesMaxCount && files.length % 2 == 0
                 && !mashName.isEmpty() && mashName.length() >= minMashNameLength && mashName.length() <= maxMashNameLength
                 && !respondentMessage.isEmpty() && respondentMessage.length() >= minMashMessage && respondentMessage.length() <= maxMashMessage
-                && user != null) {
+                && (user != null || !registrationEnable)) {
 
             boolean folderExistence = Utils.checkFolderExistence(picturesPath);
 
@@ -101,8 +101,8 @@ public class MashController {
                         target.setName(Utils.getFileNameWithoutExtension(multipartFile.getOriginalFilename()));
                         targetService.save(target);
 
-                        return "redirect:/";
                     }
+                    return "redirect:/";
                 } else {
                     return "redirect:/?duplicateMashName";
                 }

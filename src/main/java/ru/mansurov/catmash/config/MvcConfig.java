@@ -11,6 +11,9 @@ public class MvcConfig implements WebMvcConfigurer {
     @Value("${pictures.path}")
     private String picturesPath;
 
+    @Value("${registration.enable}")
+    private boolean registrationEnable;
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("img/**")
@@ -19,7 +22,9 @@ public class MvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/login").setViewName("login");
-        registry.addViewController("/registration").setViewName("registration");
+        if (registrationEnable) {
+            registry.addViewController("/login").setViewName("login");
+            registry.addViewController("/registration").setViewName("registration");
+        }
     }
 }

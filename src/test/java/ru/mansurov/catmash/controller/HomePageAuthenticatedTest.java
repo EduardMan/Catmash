@@ -1,5 +1,6 @@
 package ru.mansurov.catmash.controller;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,12 +12,17 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import ru.mansurov.catmash.model.Target;
+import ru.mansurov.catmash.model.service.TargetServiceImpl;
+import ru.mansurov.catmash.model.service.UserService;
+import ru.mansurov.catmash.model.service.UserServiceImpl;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
@@ -35,6 +41,12 @@ public class HomePageAuthenticatedTest {
 
     @Autowired
     private HomePageController homePageController;
+
+    @Autowired
+    private UserServiceImpl userService;
+
+    @Autowired
+    private TargetServiceImpl targetService;
 
     @Value("${mash.min.message.length}")
     private int minMashMessage;
@@ -84,7 +96,22 @@ public class HomePageAuthenticatedTest {
                 .andExpect(authenticated())
                 .andExpect(xpath("//*[@id='mashes-list']/a").nodeCount(5))
                 .andExpect(xpath("//*[@id='mashes-list']/a[@id='mash_50']").exists());
-        ;
+    }
+
+    @Test
+    public void vote() throws Exception {
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+                .post("/mash/Мимимиметр/vote")
+                .param("target", "1")
+                .param("otherTarget", "4")
+                .with(csrf());
+
+        this.mockMvc.perform(requestBuilder);
+
+        Target target = targetService.getTargetById(Long.parseLong("1"));
+
+        Assert.assertEquals(1, target.getRating());
+
     }
 
     public static String generateMessageForMash(boolean fitMessage, int minMashMessage) {

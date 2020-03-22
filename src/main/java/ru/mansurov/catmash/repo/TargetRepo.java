@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface TargetRepo extends JpaRepository<Target, Long> {
 
-    @Query(value = "SELECT * FROM target WHERE mash_id = ?1 LIMIT 10",
+    @Query(value = "SELECT * FROM target WHERE mash_id = ?1 ORDER BY target.rating DESC LIMIT 10",
             nativeQuery = true)
     List<Target> getTop10ByRating(Mash mash);
 

@@ -55,4 +55,9 @@ public class TargetServiceImpl implements TargetService {
     public List<Target> getTargetsByMash(Mash mash) {
         return targetRepo.getTargetsByMash(mash);
     }
+
+    @Override
+    public Target getTargetById(Long id) {
+        return targetRepo.findById(id).get();
+    }
 }

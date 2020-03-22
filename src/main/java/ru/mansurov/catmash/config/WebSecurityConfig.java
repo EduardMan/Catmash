@@ -1,10 +1,10 @@
 package ru.mansurov.catmash.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -22,6 +22,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Value("${registration.enable}")
+    private boolean registrationEnable;
+
     @Bean
     public PasswordEncoder getPasswordEncoder() {
         return new BCryptPasswordEncoder(5);
@@ -29,22 +32,27 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
-                .authorizeRequests()
-                .antMatchers("/registration", "/addUser",
-                        "/", "/resources/**", "/login*",
-                        "/css/**", "/js/**", "/static/**",
-                        "/fonts/**", "/fonts/*", "/favicon.ico", "/favicon_150x150.ico").permitAll()
-                .anyRequest().authenticated()
-                .and()
+        if (registrationEnable) {
+            http
+                    .authorizeRequests()
+                    .antMatchers("/registration", "/addUser",
+                            "/", "/resources/**", "/login*",
+                            "/css/**", "/js/**", "/static/**",
+                            "/fonts/**", "/fonts/*", "/favicon.ico", "/favicon_150x150.ico").permitAll()
+                    .anyRequest().authenticated()
+                    .and()
                     .formLogin()
                     .loginPage("/login")
                     .defaultSuccessUrl("/", true)
                     .permitAll()
-                .and()
+                    .and()
                     .logout()
                     .logoutSuccessUrl("/")
                     .permitAll();
+        } else {
+            http
+                    .authorizeRequests().anyRequest().permitAll();
+        }
     }
 
     @Override
