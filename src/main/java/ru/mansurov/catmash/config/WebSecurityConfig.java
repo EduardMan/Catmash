@@ -14,7 +14,6 @@ import ru.mansurov.catmash.model.service.UserServiceImpl;
 
 @Configuration
 @EnableWebSecurity
-//@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserServiceImpl userServiceImpl;

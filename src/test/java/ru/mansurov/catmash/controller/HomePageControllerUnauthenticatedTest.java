@@ -22,13 +22,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestPropertySource("/application-test.properties")
-class HomePageControllerTest {
+class HomePageControllerUnauthenticatedTest {
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
     private HomePageController homePageController;
 
+    // Test that home page contains greetings
     @Test
     void homePage() throws Exception {
         assertThat(homePageController).isNotNull();
@@ -39,6 +40,7 @@ class HomePageControllerTest {
                 .andExpect(content().string(containsString("Привет, пользователь")));
     }
 
+    // Test that unauthenticated user is redirected on login page in case of getting permit page
     @Test
     void loginRequest() throws Exception {
         this.mockMvc.perform(get("/dummy"))
@@ -47,20 +49,13 @@ class HomePageControllerTest {
                 .andExpect(redirectedUrl("http://localhost/login"));
     }
 
+    // Test that page contains all mashes
     @Test
-    @Sql(value = {"/create-user-before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(value = {"/mashes-after.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    void correctLogin() throws Exception {
-        this.mockMvc.perform(formLogin().user("user1").password("user1user1"))
+    @Sql(value = {"/create-mashes-before.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = {"/create-mashes-after.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void mashesListTest() throws Exception {
+        this.mockMvc.perform(get("/"))
                 .andDo(print())
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/"));
-    }
-
-    @Test
-    void badCredentials() throws Exception {
-        this.mockMvc.perform(post("/login").param("username", "doestExist"))
-                .andDo(print())
-                .andExpect(status().isForbidden());
+                .andExpect(xpath("//*[@id='mashes-list']/a").nodeCount(4));
     }
 }

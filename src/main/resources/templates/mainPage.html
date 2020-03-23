@@ -12,8 +12,10 @@
 
 <div class="container top horizontal-center">
 
+    <!--/* display list of all mashes */-->
     <div th:replace="fragments/bodyContent.html :: mashList (${mashs}, ${notVotedMashes})"></div>
 
+    <!--/* form for adding a mash  */-->
     <div th:replace="fragments/bodyContent.html :: mashAdding (${parameters})"></div>
 
 </div>

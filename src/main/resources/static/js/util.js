@@ -22,13 +22,14 @@ $(document).ready(function () {
         })
     });
 
+    // listener for voting
+    // when user clock on picture or name of image it will sent to server
     $('.imgTarget1, .imgTarget2, .nameTarget1, .nameTarget2').on('click', function (e) {
         var url = $(location).attr("href").match("\/java\/catmash\/mash\/(.*)");
         var mashName = url[1];
         var imgTarget1 = $('.imgTarget1')[0];
         var imgTarget2 = $('.imgTarget2')[0];
         var otherTarget = this.id === imgTarget1.id ? imgTarget2.id : imgTarget1.id;
-
         $.ajax({
             type: "POST",
             url: mashName + "/vote",
@@ -57,6 +58,7 @@ $(document).ready(function () {
         window.location.href = "login";
     });
 
+    // Validate and add new mash to mashes list
     $('#addMashButton').on('click', function (e) {
         var $fileUpload = $("input[type='file']");
         var picturesMinCount = $('#buttonAddFiles').attr('picturesMinCount');

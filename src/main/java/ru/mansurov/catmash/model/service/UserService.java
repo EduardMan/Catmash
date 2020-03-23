@@ -10,4 +10,6 @@ public interface UserService {
 
     User findByUser(User User);
 
+    User findByUsername(String username);
+
 }

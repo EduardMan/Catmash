@@ -1,5 +1,6 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
+<!--/* navigation bar on the top of page */-->
 <div th:fragment="navbar">
     <nav class="navbar navbar-light bg-light">
         <a class="navbar-brand" th:href="@{/}">Catmash</a>
@@ -20,6 +21,7 @@
     </nav>
 </div>
 
+<!--/* list of top targets of selected mash */-->
 <div th:fragment="topTagrets (mash, topTargets)">
     <div class="container top horizontal-center">
         <div class="card default-indentation">
@@ -58,6 +60,7 @@
     </div>
 </div>
 
+<!--/* display two targets in voting proccess */-->
 <div th:fragment="mash (mash, targetsForMash)">
     <div class="container top horizontal-center">
         <div class="card default-indentation">
@@ -94,18 +97,21 @@
     </div>
 </div>
 
+<!--/* mash adding form */-->
 <div th:fragment="mashAdding (parameters)">
-
-<!--    <div th:with="someVariable=${'Имя будет взято из названия файла, например для файла &quot;Барсик.jpg&quot; будет взято имя &quot;Барсик&quot; (нужно добавить минимум ' + parameters.picturesMinCount + ' файлов, их количество должно быть четным).'}"></div>-->
-
     <div class="card default-indentation">
+        <!--/* message for unknown error in creating mash process */-->
         <span th:if="${param.error != null}"><p class="text-danger">При добавлении нового опроса произошла непредвиденная ошибка</p></span>
+        <!--/* message if one of adding file is excess allowed size in creating mash process */-->
+        <span th:if="${param.maxFileSizeExcess != null}"><p class="text-danger" th:text="${'Размер файла не должен превышать ' + @environment.getProperty('picture.max.size') + ' kb'}"></p></span>
         <th:block th:if="${@environment.getProperty('registration.enable')}">
             <h3 sec:authorize="isAnonymous()">Вы сможете добавить свой опрос после регистрации</h3>
         </th:block>
         <h3 sec:authorize="isAuthenticated()">Добавить свой опрос: </h3>
         <span th:if="${param.duplicateMashName != null}"><p class="text-danger">Опрос с данным именем уже существует</p></span>
         <form id="newMashForm" method="post" enctype="multipart/form-data" action="addMash">
+            <!--/* field for name of mash */-->
+            <!--/* Display if registration is enabled */-->
             <th:block th:if="${@environment.getProperty('registration.enable')}">
                 <div class="form-group">
                     <label for="mashName">Название опроса:</label>
@@ -115,6 +121,7 @@
                            th:attrappend="disabled=${#authorization.expression('isAnonymous()')} ? 'disabled'"/>
                 </div>
             </th:block>
+            <!--/* Display if registration is disabled */-->
             <th:block th:if="${!@environment.getProperty('registration.enable')}">
                 <div class="form-group">
                     <label for="mashName">Название опроса:</label>
@@ -123,22 +130,27 @@
                            required="required"/>
                 </div>
             </th:block>
+            <!--/* field for message mash */-->
             <div class="form-group">
                 <label for="mashName">Сообщение для респондента:</label>
+                <!--/* Display if registration is enabled */-->
                 <th:block th:if="${@environment.getProperty('registration.enable')}">
                     <input type="text" class="form-control" id="respondentMessage" name="respondentMessage"
                            th:minlength="${parameters.minMashMessage}" th:maxlength="${parameters.maxMashMessage}"
                            required="required"
                            th:attrappend="disabled=${#authorization.expression('isAnonymous()')} ? 'disabled'"/>
                 </th:block>
+                <!--/* Display if registration is disabled */-->
                 <th:block th:if="${!@environment.getProperty('registration.enable')}">
                     <input type="text" class="form-control" id="respondentMessage" name="respondentMessage"
                            th:minlength="${parameters.minMashMessage}" th:maxlength="${parameters.maxMashMessage}"
                            required="required"/>
                 </th:block>
             </div>
+            <!--/* Button for adding files to mash */-->
             <div class="form-group">
                 <label for="buttonAddFiles">Добавьте изображения</label>
+                <!--/* Display if registration is enabled */-->
                 <th:block th:if="${@environment.getProperty('registration.enable')}">
                     <input type="file" name="files" multiple="multiple" class="form-control-file" id="buttonAddFiles"
                            aria-describedby="infoMessage" accept="image/*"
@@ -146,6 +158,7 @@
                            th:picturesMaxCount="${parameters.picturesMaxCount}" required="required"
                            th:attrappend="disabled=${#authorization.expression('isAnonymous()')} ? 'disabled'"/>
                 </th:block>
+                <!--/* Display if registration is disabled */-->
                 <th:block th:if="${!@environment.getProperty('registration.enable')}">
                     <input type="file" name="files" multiple="multiple" class="form-control-file" id="buttonAddFiles"
                            aria-describedby="infoMessage" accept="image/*"
@@ -154,12 +167,15 @@
                 </th:block>
                 <small id="infoMessage" class="form-text text-muted" th:text="${'Имя будет взято из названия файла, например для файла &quot;Барсик.jpg&quot; будет взято имя &quot;Барсик&quot; (нужно добавить минимум ' + parameters.picturesMinCount + ' файлов, их количество должно быть четным).'}"></small>
             </div>
+            <!--/* Button for send form (creating mash) */-->
+            <!--/* Display if registration is enabled */-->
             <th:block th:if="${@environment.getProperty('registration.enable')}">
                 <button type="submit" class="btn btn-primary" id="addMashButton"
                         th:attrappend="disabled=${#authorization.expression('isAnonymous()')} ? 'disabled'">Создать
                     опрос
                 </button>
             </th:block>
+            <!--/* Display if registration is disabled */-->
             <th:block th:if="${!@environment.getProperty('registration.enable')}">
                 <button type="submit" class="btn btn-primary" id="addMashButton" > Создать опрос
                 </button>
@@ -169,6 +185,7 @@
     </div>
 </div>
 
+<!--/* list of all messages */-->
 <div th:fragment="mashList (mashs, notVotedMashes)">
     <div class="card default-indentation">
         <h3>Опросы:</h3>
@@ -179,6 +196,7 @@
                    th:classappend="${notVotedMashes != null && !notVotedMashes.contains(mash)} ? 'list-group-item-success'"
                    th:inline="text" th:id="${'mash_' + mash.id}">
                     [[${mash.name}]]
+                    <!--/* button for delete a mash (available only for users with ADMIN role) */-->
                     <div th:if="${user?.containsRole('ADMIN')}"><span th:id="${mash.id}" class="removeMash"
                                                                       style="cursor: pointer;">X</span></div>
                 </a>

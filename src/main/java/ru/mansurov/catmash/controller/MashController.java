@@ -59,6 +59,9 @@ public class MashController {
     @Value("${registration.enable}")
     private boolean registrationEnable;
 
+    @Value("${picture.max.size}")
+    private int pictureMaxSize;
+
     @PostMapping("/addMash")
     public String addPictures(@RequestParam("files") MultipartFile[] files,
                               @ModelAttribute("mashName") String mashName,
@@ -70,42 +73,47 @@ public class MashController {
                 && !respondentMessage.isEmpty() && respondentMessage.length() >= minMashMessage && respondentMessage.length() <= maxMashMessage
                 && (user != null || !registrationEnable)) {
 
-            boolean folderExistence = Utils.checkFolderExistence(picturesPath);
+            if (Utils.checkSizeOfFiles(files, pictureMaxSize)) {
 
-            if (folderExistence) {
+                boolean folderExistence = Utils.checkFolderExistence(picturesPath);
 
-                Mash mash = mashService.findByName(mashName);
+                if (folderExistence) {
 
-                // Create new mash and save in DB
-                if (mash == null) {
-                    mash = new Mash();
-                    mash.setName(mashName);
-                    mash.setMessage(respondentMessage);
-                    mashService.save(mash);
+                    Mash mash = mashService.findByName(mashName);
 
-                    // Copy files to server
-                    for (MultipartFile multipartFile :
-                            files) {
-                        // UUID prefix for file name
-                        String uuidFile = UUID.randomUUID().toString();
-                        String resultFileName = uuidFile + "." + multipartFile.getOriginalFilename();
+                    // Create new mash and save in DB
+                    if (mash == null) {
+                        mash = new Mash();
+                        mash.setName(mashName);
+                        mash.setMessage(respondentMessage);
+                        mashService.save(mash);
 
-                        // Copy file to server
-                        multipartFile.transferTo(new File(picturesPath + "/" + resultFileName));
+                        // Copy files to server
+                        for (MultipartFile multipartFile :
+                                files) {
+                            // UUID prefix for file name
+                            String uuidFile = UUID.randomUUID().toString();
+                            String resultFileName = uuidFile + "." + multipartFile.getOriginalFilename();
 
-                        // Create new target and save in DB
-                        Target target = new Target();
-                        target.setMash(mash);
-                        target.setFileName(resultFileName);
-                        // Name for picture, it based on file name without extension
-                        target.setName(Utils.getFileNameWithoutExtension(multipartFile.getOriginalFilename()));
-                        targetService.save(target);
+                            // Copy file to server
+                            multipartFile.transferTo(new File(picturesPath + "/" + resultFileName));
 
+                            // Create new target and save in DB
+                            Target target = new Target();
+                            target.setMash(mash);
+                            target.setFileName(resultFileName);
+                            // Name for picture, it based on file name without extension
+                            target.setName(Utils.getFileNameWithoutExtension(multipartFile.getOriginalFilename()));
+                            targetService.save(target);
+
+                        }
+                        return "redirect:/";
+                    } else {
+                        return "redirect:/?duplicateMashName";
                     }
-                    return "redirect:/";
-                } else {
-                    return "redirect:/?duplicateMashName";
                 }
+            } else {
+                return "redirect:/?maxFileSizeExcess";
             }
         }
         return "redirect:/?error";
@@ -118,10 +126,14 @@ public class MashController {
                            @CookieValue(value = "voted", defaultValue = "") String voted) {
 
         Mash currentMash = mashService.findByName(mashName);
+        // two random targets which still was not chosen by User
         List<Target> newRandomTargets = null;
+
         if (registrationEnable) {
+            // get newRandomTargets by User (if registration is enabled)
             newRandomTargets = targetService.get2RandomTargets(currentMash, user);
         } else {
+            // get newRandomTargets by cookie (if registration is disabled)
             newRandomTargets = targetService.get2RandomTargets(currentMash,
                     targetService.findAllByIdIn(Utils.getIdsFromCookieString(voted)));
         }
@@ -154,6 +166,7 @@ public class MashController {
 
 
         List<Target> newRandomTargets = null;
+
         if (mashName != null && !mashName.isEmpty() && target != null && otherTarget != null) {
 
             if (registrationEnable) {

@@ -1,6 +1,7 @@
 package ru.mansurov.catmash.util;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.multipart.MultipartFile;
 import ru.mansurov.catmash.model.Target;
 
 import java.io.File;
@@ -39,5 +40,15 @@ public class Utils {
             File targetFile = new File(picturesPath + "/" + target.getFileName());
             targetFile.delete();
         }
+    }
+
+    public static boolean checkSizeOfFiles(MultipartFile[] files, int pictureMaxSize) {
+        for (MultipartFile file :
+                files) {
+            if (file.getSize()/1024 > pictureMaxSize) {
+                return false;
+            }
+        }
+        return true;
     }
 }

@@ -56,4 +56,9 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     public User findByUser(User user) {
         return userRepo.findById(user.getId()).get();
     }
+
+    @Override
+    public User findByUsername(String username) {
+        return userRepo.findByUsername(username);
+    }
 }
