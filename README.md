@@ -1,7 +1,7 @@
 # Catmash
 ---
 
-![](https://eduardprojects.me/java/catmash/favicon_150x150.ico)
+![](src/main/resources/static/favicon_150x150.ico)
 
 
 **Catmash** - это сервис позволяющий создавать и проходить голосования.
