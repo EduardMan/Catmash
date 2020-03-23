@@ -1,5 +1,4 @@
 # Catmash
----
 
 ![](src/main/resources/static/favicon_150x150.ico)
 
