@@ -36,6 +36,9 @@ public class HomePageController {
     @Value("${mash.max.message.length}")
     private int maxMashMessage;
 
+    @Value("${picture.max.size}")
+    private int maxPictureSize;
+
     @GetMapping
     public String homePage(Model model,
                            @AuthenticationPrincipal User user) {
@@ -51,6 +54,7 @@ public class HomePageController {
         parameters.put("maxMashNameLength", maxMashNameLength);
         parameters.put("minMashMessage", minMashMessage);
         parameters.put("maxMashMessage", maxMashMessage);
+        parameters.put("maxPictureSize", maxPictureSize);
         model.addAttribute("parameters", parameters);
 
         model.addAttribute("notVotedMashes", null);

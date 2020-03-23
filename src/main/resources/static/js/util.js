@@ -63,7 +63,15 @@ $(document).ready(function () {
         var $fileUpload = $("input[type='file']");
         var picturesMinCount = $('#buttonAddFiles').attr('picturesMinCount');
         var picturesMaxCount = $('#buttonAddFiles').attr('picturesMaxCount');
+        var maxFileSize =  $('#maxFileSize').attr('maxPictureSize');
         var numberOfFiles = parseInt($fileUpload.get(0).files.length);
+        for (i = 0; i < numberOfFiles; i++) {
+            if ($fileUpload.get(0).files[i].size/1024 > maxFileSize) {
+                e.preventDefault(e);
+                alert("Размер каждого файла не должен превышать " + maxFileSize + " kb");
+                break;
+            }
+        }
         if (numberOfFiles < picturesMinCount) {
             e.preventDefault(e);
             alert("Вы должны добавить не менее " + picturesMinCount + " файлов");
