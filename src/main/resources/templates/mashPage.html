@@ -11,12 +11,12 @@
 
 <div th:replace="fragments/bodyContent.html :: navbar"></div>
 
-<!--Display if person has already voted -->
+<!--/* Display if person has already voted */-->
 <span th:if="${voted}">
     <div th:replace="fragments/bodyContent.html :: topTagrets (${mash}, ${topTargets})"></div>
 </span>
 
-<!--Display if person has not voted yet -->
+<!--/* Display if person has not voted yet */-->
 <span th:if="${!voted}">
     <div th:replace="fragments/bodyContent.html :: mash (${mash}, ${targetsForMash})"></div>
 </span>

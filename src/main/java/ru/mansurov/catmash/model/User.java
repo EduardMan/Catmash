@@ -25,14 +25,6 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
 
-//    @ManyToMany
-//    @JoinTable(
-//            name = "voted_user_targets",
-//            joinColumns = @JoinColumn(name = "user_id"),
-//            inverseJoinColumns = @JoinColumn(name = "target_id"))
-//    @JsonBackReference
-//    private Set<Target> votedTargets;
-
     @ManyToMany(mappedBy = "votedUsers")
     @JsonManagedReference
     private Set<Target> votedTargets;

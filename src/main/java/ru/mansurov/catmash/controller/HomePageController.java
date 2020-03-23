@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import ru.mansurov.catmash.model.User;
 import ru.mansurov.catmash.model.service.MashServiceImpl;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,6 +39,7 @@ public class HomePageController {
     @GetMapping
     public String homePage(Model model,
                            @AuthenticationPrincipal User user) {
+
         // find all mashes and show him for user
         model.addAttribute("mashs", mashService.findAll());
 
