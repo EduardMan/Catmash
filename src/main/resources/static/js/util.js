@@ -25,8 +25,8 @@ $(document).ready(function () {
     // listener for voting
     // when user clock on picture or name of image it will sent to server
     $('.imgTarget1, .imgTarget2, .nameTarget1, .nameTarget2').on('click', function (e) {
-        var url = $(location).attr("href").match("\/java\/catmash\/mash\/(.*)");
-        var mashName = url[1];
+        var mashName = $('#mashName').text();
+        var servletContextPath = $('#servletContextPath').text();
         var imgTarget1 = $('.imgTarget1')[0];
         var imgTarget2 = $('.imgTarget2')[0];
         var otherTarget = this.id === imgTarget1.id ? imgTarget2.id : imgTarget1.id;
@@ -37,8 +37,8 @@ $(document).ready(function () {
             success: function (data) {
                 // if we do not have more targets just show a Top
                 if (data.length !== 0) {
-                    imgTarget1.src = '/java/catmash/img/' + data[0].fileName;
-                    imgTarget2.src = '/java/catmash/img/' + data[1].fileName;
+                    imgTarget1.src = servletContextPath + '/img/' + data[0].fileName;
+                    imgTarget2.src = servletContextPath + '/img/' + data[1].fileName;
                     imgTarget1.id = data[0].id;
                     imgTarget2.id = data[1].id;
                     $('.nameTarget1')[0].id = data[0].id;

@@ -10,4 +10,6 @@
 
     <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" />
     <link rel="stylesheet" th:href="@{/css/userStyles.css}" />
+
+    <div id="servletContextPath" th:text="${@environment.getProperty('server.servlet.context-path')}" hidden="hidden"></div>
 </div>
