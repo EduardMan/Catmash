@@ -10,7 +10,6 @@
 + Spring boot
 + Spring mvc
 + Spring security
-+ Hibernate
 + Thymeleaf
 + Maven
 + Postgres
