@@ -6,7 +6,9 @@ import ru.mansurov.catmash.model.Target;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Utils {
 
@@ -24,14 +26,10 @@ public class Utils {
     }
 
     public static List<Long> getIdsFromCookieString(String cookieString) {
-        List<Long> ids = new ArrayList<>();
-        if (!cookieString.isEmpty()) {
-            for (String str :
-                    cookieString.split("\\.")) {
-                ids.add(Long.valueOf(str));
-            }
-        }
-        return ids;
+        return Arrays.stream(cookieString.split("\\."))
+                .filter(s -> !s.isEmpty())
+                .map(Long::valueOf)
+                .collect(Collectors.toList());
     }
 
     public static void DeleteTargetFiles(List<Target> targets, String picturesPath) {
@@ -43,12 +41,7 @@ public class Utils {
     }
 
     public static boolean checkSizeOfFiles(MultipartFile[] files, int pictureMaxSize) {
-        for (MultipartFile file :
-                files) {
-            if (file.getSize()/1024 > pictureMaxSize) {
-                return false;
-            }
-        }
-        return true;
+        return Arrays.stream(files)
+                .allMatch(file -> file.getSize() / 1024 <= pictureMaxSize);
     }
 }
