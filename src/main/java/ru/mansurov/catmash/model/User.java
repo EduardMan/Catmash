@@ -25,9 +25,10 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
 
-    @ManyToMany(mappedBy = "votedUsers")
+//    @ManyToMany(mappedBy = "votedUsers")
     @JsonManagedReference
-    private Set<Target> votedTargets;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private Set<VotedUserTargets> votedTargets;
 
     public Long getId() {
         return id;
@@ -53,11 +54,11 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    public Set<Target> getVotedTargets() {
+    public Set<VotedUserTargets> getVotedTargets() {
         return votedTargets;
     }
 
-    public void setVotedTargets(Set<Target> votedTargets) {
+    public void setVotedTargets(Set<VotedUserTargets> votedTargets) {
         this.votedTargets = votedTargets;
     }
 

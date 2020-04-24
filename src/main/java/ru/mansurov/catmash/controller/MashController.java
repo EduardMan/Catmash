@@ -7,13 +7,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.mansurov.catmash.model.Mash;
-import ru.mansurov.catmash.model.Role;
-import ru.mansurov.catmash.model.Target;
-import ru.mansurov.catmash.model.User;
+import ru.mansurov.catmash.model.*;
 import ru.mansurov.catmash.model.service.MashServiceImpl;
 import ru.mansurov.catmash.model.service.TargetServiceImpl;
 import ru.mansurov.catmash.model.service.UserServiceImpl;
+import ru.mansurov.catmash.model.service.VotedUserTargetsServiceImpl;
 import ru.mansurov.catmash.util.Utils;
 
 import javax.servlet.http.Cookie;
@@ -21,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Controller
@@ -34,6 +33,9 @@ public class MashController {
 
     @Autowired
     UserServiceImpl userService;
+
+    @Autowired
+    VotedUserTargetsServiceImpl votedUserTargetsService;
 
     @Value("${pictures.path}")
     private String picturesPath;
@@ -170,10 +172,12 @@ public class MashController {
         if (mashName != null && !mashName.isEmpty() && target != null && otherTarget != null) {
 
             if (registrationEnable) {
-                target.getVotedUsers().add(user);
-                otherTarget.getVotedUsers().add(user);
+                VotedUserTargets votedUserTargets = new VotedUserTargets(target, user, true);
+                VotedUserTargets otherVotedUserTargets = new VotedUserTargets(otherTarget, user, false);
+                Set<VotedUserTargets> votedUsers = target.getVotedUsers();
+                votedUsers.add(votedUserTargets);
+                votedUsers.add(otherVotedUserTargets);
                 targetService.save(target);
-                targetService.save(otherTarget);
                 newRandomTargets = targetService.get2RandomTargets(mashService.findByName(mashName), user);
             } else {
                 // Get two relative random targets, excluding targets which person has already voted plus current targets
@@ -184,7 +188,6 @@ public class MashController {
                 // Increase ration of selected target and write to cookie new shown targets
                 response.addCookie(new Cookie("voted", idsFilter));
             }
-            targetService.increaseRating(target);
 
         }
         return newRandomTargets;

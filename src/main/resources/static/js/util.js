@@ -29,6 +29,8 @@ $(document).ready(function () {
         var servletContextPath = $('#servletContextPath').text();
         var imgTarget1 = $('.imgTarget1')[0];
         var imgTarget2 = $('.imgTarget2')[0];
+        var nameTarget1 = $('.nameTarget1');
+        var nameTarget2 = $('.nameTarget2');
         var otherTarget = this.id === imgTarget1.id ? imgTarget2.id : imgTarget1.id;
         $.ajax({
             type: "POST",
@@ -41,8 +43,10 @@ $(document).ready(function () {
                     imgTarget2.src = servletContextPath + '/img/' + data[1].fileName;
                     imgTarget1.id = data[0].id;
                     imgTarget2.id = data[1].id;
-                    $('.nameTarget1')[0].id = data[0].id;
-                    $('.nameTarget2')[0].id = data[1].id;
+                    nameTarget1[0].id = data[0].id;
+                    nameTarget2[0].id = data[1].id;
+                    nameTarget1.text(data[0].name)
+                    nameTarget2.text(data[1].name)
                 } else {
                     window.location.href = mashName;
                 }

@@ -26,12 +26,6 @@ public class TargetServiceImpl implements TargetService {
     }
 
     @Override
-    public void increaseRating(Target target) {
-        target.setRating(target.getRating() + 1);
-        targetRepo.save(target);
-    }
-
-    @Override
     public List<Target> get2RandomTargets(Mash mash, List<Target> targets) {
         return targetRepo.get2RandomTargets(mash, targets);
     }
@@ -59,5 +53,10 @@ public class TargetServiceImpl implements TargetService {
     @Override
     public Target getTargetById(Long id) {
         return targetRepo.findById(id).get();
+    }
+
+    @Override
+    public int getRating(Target target) {
+        return targetRepo.getRating(target);
     }
 }

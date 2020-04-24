@@ -12,8 +12,6 @@ public interface TargetService {
 
     List<Target> getTop10ByRating(Mash mash);
 
-    void increaseRating(Target target);
-
     List<Target> get2RandomTargets(Mash mash, List<Target> targets);
 
     List<Target> get2RandomTargets(Mash mash, User user);
@@ -25,5 +23,7 @@ public interface TargetService {
     List<Target> getTargetsByMash(Mash mash);
 
     Target getTargetById(Long id);
+
+    int getRating(Target target);
 
 }

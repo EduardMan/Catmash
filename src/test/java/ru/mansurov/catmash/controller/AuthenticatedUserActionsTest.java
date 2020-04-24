@@ -99,7 +99,7 @@ public class AuthenticatedUserActionsTest {
 
         Target target = targetService.getTargetById(Long.parseLong("1"));
 
-        Assert.assertEquals(1, target.getRating());
+        Assert.assertEquals(1, targetService.getRating(target));
 
     }
 }

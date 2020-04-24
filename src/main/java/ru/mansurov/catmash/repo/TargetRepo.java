@@ -11,7 +11,9 @@ import java.util.List;
 
 public interface TargetRepo extends JpaRepository<Target, Long> {
 
-    @Query(value = "SELECT * FROM target WHERE mash_id = ?1 ORDER BY target.rating DESC LIMIT 10",
+    @Query(value = "SELECT * FROM target LEFT JOIN (SELECT target_id, count(1) as rating " +
+            "FROM voted_user_targets GROUP BY target_id) as vot ON target.id = vot.target_id " +
+            "WHERE mash_id = ?1 ORDER BY case when rating is null then 1 else 0 end, rating DESC LIMIT 10",
             nativeQuery = true)
     List<Target> getTop10ByRating(Mash mash);
 
@@ -25,6 +27,10 @@ public interface TargetRepo extends JpaRepository<Target, Long> {
     List<Target> get2RandomTargets(Mash mash, User user);
 
     List<Target> findAllByIdIn(List<Long> ids);
+
+    @Query(value = "SELECT count(1) FROM voted_user_targets WHERE target_id = ?1 and is_voted",
+            nativeQuery = true)
+    int getRating(Target target);
 
     @Transactional
     void deleteTargetsByMash(Mash mash);

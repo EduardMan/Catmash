@@ -19,23 +19,12 @@ public class Target {
     @Column(name = "file_name", nullable = false)
     private String fileName;
     @Column(nullable = false)
-    @JoinColumn(name = "rating")
-    private int rating;
-    @Column(nullable = false)
     @JoinColumn(name = "name")
     private String name;
 
-//    @ManyToMany(mappedBy = "votedTargets")
-//    @JsonManagedReference
-//    private Set<User> votedUsers;
-
-    @ManyToMany
-    @JoinTable(
-            name = "voted_user_targets",
-            joinColumns = @JoinColumn(name = "target_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id"))
     @JsonBackReference
-    private Set<User> votedUsers;
+    @OneToMany(mappedBy = "target", cascade = CascadeType.ALL)
+    private Set<VotedUserTargets> votedUsers;
 
     public Long getId() {
         return id;
@@ -61,14 +50,6 @@ public class Target {
         this.fileName = fileName;
     }
 
-    public int getRating() {
-        return rating;
-    }
-
-    public void setRating(int rating) {
-        this.rating = rating;
-    }
-
     public String getName() {
         return name;
     }
@@ -77,11 +58,11 @@ public class Target {
         this.name = name;
     }
 
-    public Set<User> getVotedUsers() {
+    public Set<VotedUserTargets> getVotedUsers() {
         return votedUsers;
     }
 
-    public void setVotedUsers(Set<User> votedUsers) {
+    public void setVotedUsers(Set<VotedUserTargets> votedUsers) {
         this.votedUsers = votedUsers;
     }
 }
