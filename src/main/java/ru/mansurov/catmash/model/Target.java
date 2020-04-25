@@ -1,7 +1,5 @@
 package ru.mansurov.catmash.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
 import javax.persistence.*;
 import java.util.Set;
 
@@ -22,7 +20,7 @@ public class Target {
     @JoinColumn(name = "name")
     private String name;
 
-    @JsonBackReference
+    // @JsonBackReference
     @OneToMany(mappedBy = "target", cascade = CascadeType.ALL)
     private Set<VotedUserTargets> votedUsers;
 

@@ -1,6 +1,5 @@
 package ru.mansurov.catmash.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -25,8 +24,8 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
 
-//    @ManyToMany(mappedBy = "votedUsers")
-    @JsonManagedReference
+    // @ManyToMany(mappedBy = "votedUsers")
+    // @JsonManagedReference
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<VotedUserTargets> votedTargets;
 

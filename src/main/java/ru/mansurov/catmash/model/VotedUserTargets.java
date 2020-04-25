@@ -4,15 +4,18 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
+@Embeddable
 @Table(name = "voted_user_targets")
 @IdClass(VotedUserTargets.class)
 public class VotedUserTargets implements Serializable {
     @Id
+    @Embedded
     @ManyToOne
     @JoinColumn(name = "target_id")
     private Target target;
 
     @Id
+    @Embedded
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

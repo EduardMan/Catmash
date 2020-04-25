@@ -172,12 +172,13 @@ public class MashController {
         if (mashName != null && !mashName.isEmpty() && target != null && otherTarget != null) {
 
             if (registrationEnable) {
-                VotedUserTargets votedUserTargets = new VotedUserTargets(target, user, true);
-                VotedUserTargets otherVotedUserTargets = new VotedUserTargets(otherTarget, user, false);
-                Set<VotedUserTargets> votedUsers = target.getVotedUsers();
+                User DBUser = userService.findByUser(user);
+                VotedUserTargets votedUserTargets = new VotedUserTargets(target, DBUser, true);
+                VotedUserTargets otherVotedUserTargets = new VotedUserTargets(otherTarget, DBUser, false);
+                Set<VotedUserTargets> votedUsers = DBUser.getVotedTargets();
                 votedUsers.add(votedUserTargets);
                 votedUsers.add(otherVotedUserTargets);
-                targetService.save(target);
+                userService.save(DBUser);
                 newRandomTargets = targetService.get2RandomTargets(mashService.findByName(mashName), user);
             } else {
                 // Get two relative random targets, excluding targets which person has already voted plus current targets
