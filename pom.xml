@@ -29,7 +29,7 @@
     </build>
 
     <properties>
-        <spring.version>2.2.4.RELEASE</spring.version>
+        <spring.version>2.5.12</spring.version>
     </properties>
 
     <dependencies>
